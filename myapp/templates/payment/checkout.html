@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block header %}
+<script src="https://js.stripe.com/v3/"></script>
+<h1 class="page-title">Choose Your Plan</h1>
+{% endblock %}
+{% block content %}
+<form action="{{ url_for('payment.create_checkout_session') }}" method="post" class="pricing-form">
+    <input type="hidden" name="email" value="{{ email }}">
+    <div id="pricing-plans" class="plan-grid">
+        <div class="plan">
+            <h2 class="plan-title">Basic Plan</h2>
+            <p class="plan-price">£5/month</p>
+            <p class="plan-feature">Up to 200 minutes of audio</p>
+            <button type="submit" name="plan" value="basic" class="plan-button">
+                Select Basic
+            </button>
+        </div>
+        <div class="plan">
+            <h2 class="plan-title">Standard Plan</h2>
+            <p class="plan-price">£10/month</p>
+            <p class="plan-feature">Up to 500 minutes of audio</p>
+            <button type="submit" name="plan" value="standard" class="plan-button">
+                Select Standard
+            </button>
+        </div>
+        <div class="plan">
+            <h2 class="plan-title">Premium Plan</h2>
+            <p class="plan-price">£20/month</p>
+            <p class="plan-feature">Up to 1000 minutes of audio</p>
+            <button type="submit" name="plan" value="premium" class="plan-button">
+                Select Premium
+            </button>
+        </div>
+    </div>
+</form>
+{% endblock %}

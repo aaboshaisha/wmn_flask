@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block header %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<script src="{{ url_for('static', filename='record.js') }}" defer></script>
+<h1 class="page-title">Create Your Note</h1>
+{% endblock %}
+{% block content %}
+<div class="main-content">
+    <div class="control-panel">
+        <button type="button" id="record-button" class="action-button"> Record <i class="fas fa-microphone"></i></button>
+        <button onclick="document.getElementById('transcription-output').value=''" class="action-button secondary">Clear</button>
+    </div>
+    <div class="transcription-area">
+        <textarea id="transcription-output" name="transcription-output" placeholder="Your transcription will appear here..."></textarea>
+    </div>
+    <div class="note-selection">
+        <select id="assistant-selector"
+        name="assistant" 
+        hx-post="/notes/select_assistant" 
+        hx-include="this"
+        hx-trigger="change"
+        hx-target="#note-options"
+        hx-swap="innerHTML"
+        class="select-input">
+            <option value="" disabled selected>Select note type:</option>
+            <option value="patient_assistant">Patient Letter</option>
+            <option value="gp_assistant_1">GP Letter 1</option>
+            <option value="gp_assistant_2">GP Letter 2</option>
+            <option value="sbard_assistant">SBAR Note</option>
+            <option value="custom_assistant"
+            hx-post="/notes/custom_assistant">Custom Note</option>
+        </select>
+        <div id="note-options" class="note-options"></div>
+        <div id="custom-note-options" class="custom-note-options"></div>
+    </div>
+    <div id="assistant-output" class="assistant-output"></div>
+</div>
+{% endblock %}

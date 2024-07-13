@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% block header %}
+<h1 class="cancel-message">Checkout canceled</h1>
+{% endblock %}
+{% block content %}
+<p class="cancel-instruction">Log in to be directed to the checkout page.</p>
+<a href="{{ url_for('auth.login') }}" class="action-button">Log In</a>
+{% endblock %}

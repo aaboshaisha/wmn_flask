@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block header %}
+<h1>Transform Your Voice into Structured Clinical Notes</h1>
+{% endblock %}
+{% block content %}
+<section id="problem">
+    <h2>Clinicians now spend 25% more time on documentation compared to 2015</h2>
+    <div class="card-grid">
+        <div class="card">
+            <p><strong>Get a Personal Dictation Assistant:</strong> Our app serves as a virtual secretary, offering clinicians
+                without dedicated secretarial support a convenient tool for dictation.</p>
+        </div>
+        <div class="card">
+            <p><strong>Take control of your time:</strong> Transforming dictation into structured notes reduces documentation time to under 5 minutes, freeing up valuable time for patient care.</p>
+        </div>
+        <div class="card">
+            <p><strong>Style and Language Support:</strong> Our app helps you produce grammatically correct and
+                well-structured notes, ensuring clear communication.</p>
+        </div>
+        <div class="card">
+            <p><strong>Reduce the Burnout:</strong> By cutting down documentation time and effort, our app helps
+                alleviate the administrative burden, contributing to lower burnout levels.</p>
+        </div>
+    </div>
+</section>
+<section id="how-it-works">
+    <h2>How WriteMyNotes works?</h2>
+    <h3>Surprisingly Easy: </h3>
+    <div class="card-grid">
+        <div class="card">
+            <p><strong>1- Record</strong> Press record to dictate your notes.</p>
+        </div>
+        <div class="card">
+            <p><strong>2- Choose template</strong> Choose from pre-defined templates (e.g., SBARD notes, GP letters,
+                Patient Letters) or customize your own, ensuring consistent and clear documentation.</p>
+        </div>
+        <div class="card">
+            <p><strong>3- Output</strong> Click submit and see your structured notes show up.</p>
+        </div>
+    </div>
+</section>
+<section id="pricing">
+    <h2>Pricing Plans</h2>
+    <div class="card-grid">
+        <div class="card">
+            <p><strong>Basic Plan:</strong> £5/month - 200 minutes of audio, 40,000 words</p>
+        </div>
+        <div class="card">
+            <p><strong>Standard Plan:</strong> £10/month - 500 minutes of audio, 100,000 words</p>
+        </div>
+        <div class="card">
+            <p><strong>Premium Plan:</strong> £20/month - 1000 minutes of audio, 200,000 words</p>
+        </div>
+    </div>
+</section>
+<section id="try-it-now">
+    <p>Think of the time you'd gain during busy clinic weeks or on-call days. With WriteMyNotes, you can focus more on
+        patient care and less on paperwork.</p>
+    <a href="{{ url_for('auth.register') }}" class="nhs-button">Get Started</a>
+</section>
+{% endblock %}

@@ -1,0 +1,35 @@
+<form id="custom-note-options" class="custom-note-form"
+hx-post="/notes/handle_assistant" 
+hx-target="#assistant-output"
+hx-include="[name=transcription-output]"
+hx-indicator="#spinner">
+    <div class="form-group">
+        <select id="writing-style-select" name="writing_style" class="select-input">
+            <option value="">Select Writing Style:</option>
+            <option value="Clear and Concise">Clear and Concise</option>
+            <option value="Professional and Formal">Professional and Formal</option>
+            <option value="Detailed and Comprehensive">Detailed and Comprehensive</option>
+        </select>
+    </div>
+    <div id="note-sections" class="note-sections">
+        <p class="section-title">Select Note Sections:</p>
+        <div class="checkbox-grid">
+            <label class="checkbox-label"><input type="checkbox" name="sections" value="Chief Complaint"> Chief Complaint</label>
+            <label class="checkbox-label"><input type="checkbox" name="sections" value="History of Present Illness (HPI)"> HPI</label>
+            <label class="checkbox-label"><input type="checkbox" name="sections" value="Past Psychiatric History"> Past Psychiatric History</label>
+            <label class="checkbox-label"><input type="checkbox" name="sections" value="Medical History"> Medical History</label>
+            <label class="checkbox-label"><input type="checkbox" name="sections" value="Family History"> Family History</label>
+            <label class="checkbox-label"><input type="checkbox" name="sections" value="Social History"> Social History</label>
+            <label class="checkbox-label"><input type="checkbox" name="sections" value="Developmental History"> Developmental History</label>
+            <label class="checkbox-label"><input type="checkbox" name="sections" value="Mental Status Examination (MSE)"> MSE</label>
+            <label class="checkbox-label"><input type="checkbox" name="sections" value="Risk Assessment"> Risk Assessment</label>
+            <label class="checkbox-label"><input type="checkbox" name="sections" value="Formulation"> Formulation</label>
+            <label class="checkbox-label"><input type="checkbox" name="sections" value="Diagnosis"> Diagnosis</label>
+            <label class="checkbox-label"><input type="checkbox" name="sections" value="Treatment Plan"> Treatment Plan</label>
+        </div>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="action-button">Submit</button>
+        <img id="spinner" class="htmx-indicator" src="{{ url_for('static', filename='bars.svg') }}">
+    </div>
+</form>

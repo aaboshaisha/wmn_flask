@@ -1,0 +1,118 @@
+:root { 
+    --primary: #0055b7;
+    --secondary: #e6e6e6;
+    --text: #333333;
+    --white: #ffffff;
+    --accent: #ff4c4c;
+  }
+  
+  body { font-family: 'Helvetica Neue', Arial, sans-serif; color: var(--text); background-color: var(--white); line-height: 1.6; margin: 0; padding: 0; }
+  .main-header { background-color: var(--white); padding: 1rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary); }
+  .main-header h1 { margin: 0; font-size: 2rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em; }
+  .menu-toggle { display: block; background: none; border: none; color: var(--primary); font-size: 1.5rem; cursor: pointer; }
+  nav { background-color: var(--white); }
+  nav ul { list-style-type: none; padding: 0; margin: 0; }
+  nav ul li { display: inline-block; }
+  nav ul li a { color: var(--primary); text-decoration: none; padding: 0.7rem 1rem; display: block; text-transform: uppercase; letter-spacing: 0.05em; }
+  nav ul li a:hover, nav ul li a:focus { background-color: var(--secondary); }
+  .content { padding: 2rem; max-width: 1200px; margin: 0 auto; }
+  .content section { margin-bottom: 3rem; }
+  .flash { background-color: var(--accent); color: var(--white); padding: 1rem; margin-bottom: 1rem; }
+  footer { background-color: var(--secondary); color: var(--text); padding: 1rem; text-align: center; }
+  footer a { color: var(--primary); }
+  
+  h1, h2, h3, h4, h5, h6 { margin-top: 2rem; margin-bottom: 1rem; font-weight: bold; }
+  h1 { font-size: 2.5rem; }
+  h2 { font-size: 2rem; text-transform: uppercase; letter-spacing: 0.1em; }
+  h3 { font-size: 1.5rem; }
+  p { margin-bottom: 1rem; }
+  
+  .nhs-button { background-color: var(--primary); color: var(--white); border: none; padding: 0.7rem 1.2rem; text-decoration: none; display: inline-block; margin-top: 1rem; cursor: pointer; text-transform: uppercase; letter-spacing: 0.1em; }
+  .nhs-button:hover, .nhs-button:focus { background-color: var(--text); }
+  
+  .card { background-color: var(--white); padding: 1.2rem; margin-bottom: 1rem; border: 1px solid var(--secondary); }
+  .card-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+  
+  @media screen and (max-width: 767px) {
+    nav { display: none; }
+    nav.active { display: block; }
+    nav ul li { display: block; }
+  }
+  
+  @media screen and (min-width: 768px) { 
+    .card-grid { grid-template-columns: repeat(3, 1fr); } 
+    .content { padding: 3rem; }
+  }
+  
+  
+  /* forms  */
+  form { max-width: 400px; margin: 0 auto; }
+  form label { display: block; margin-top: 1rem; margin-bottom: 0.5rem; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.9rem; }
+  form input { width: 100%; padding: 0.7rem; margin-bottom: 1rem; border: 1px solid var(--secondary); font-size: 1rem; }
+  form input[type="submit"] { background-color: var(--primary); color: var(--white); border: none; padding: 0.7rem 1.2rem; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; transition: background-color 0.3s ease; }
+  form input[type="submit"]:hover, form input[type="submit"]:focus { background-color: var(--text); }
+  
+  /* checout forms */
+  .pricing-form { max-width: 1000px; margin: 0 auto; }
+  .plan-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; }
+  .plan { background-color: var(--white); border: 1px solid var(--secondary); padding: 2rem; text-align: center; transition: transform 0.3s ease; }
+  .plan:hover { transform: translateY(-5px); }
+  .plan-title { font-size: 1.5rem; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem; }
+  .plan-price { font-size: 1.8rem; font-weight: bold; color: var(--primary); margin-bottom: 1rem; }
+  .plan-feature { margin-bottom: 2rem; }
+  .plan-button { background-color: var(--primary); color: var(--white); border: none; padding: 0.7rem 1.2rem; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; transition: background-color 0.3s ease; width: 100%; }
+  .plan-button:hover, .plan-button:focus { background-color: var(--text); }
+  @media screen and (max-width: 768px) { .plan-grid { grid-template-columns: 1fr; } }
+  
+  /* cancel checkout  */
+  .cancel-message { text-align: center; font-size: 2rem; margin-bottom: 2rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--primary); }
+  .cancel-instruction { text-align: center; font-size: 1.2rem; margin-bottom: 2rem; }
+  
+  /* main app page */
+  .main-content { max-width: 800px; margin: 0 auto; padding: 2rem; }
+  .control-panel { display: flex; justify-content: space-between; margin-bottom: 1rem; }
+  .action-button { background-color: var(--primary); color: var(--white); width: 200px; margin: 0 auto; border: none; padding: 0.7rem 1.2rem; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; transition: background-color 0.3s ease; }
+  .action-button:hover, .action-button:focus { background-color: var(--text); }
+  .action-button.secondary { background-color: var(--secondary); color: var(--text); }
+  .action-button.secondary:hover, .action-button.secondary:focus { background-color: #d0d0d0; }
+  .transcription-area { margin-bottom: 1rem; }
+  #transcription-output { width: 100%; height: 200px; padding: 0.7rem; border: 1px solid var(--secondary); font-size: 1rem; resize: vertical; }
+  .note-selection { margin-bottom: 1rem; }
+  .select-input { width: 100%; padding: 0.7rem; border: 1px solid var(--secondary); font-size: 1rem; background-color: var(--white); cursor: pointer; }
+  .note-options, .custom-note-options { margin-top: 1rem; }
+  /* .assistant-output { background-color: var(--white); border: 1px solid var(--secondary); padding: 1rem; margin-top: 1rem; } */
+  
+  @media screen and (max-width: 600px) { .control-panel { flex-direction: column; } .action-button { width: 100%; margin-bottom: 0.5rem; } }
+  
+  /* custom notes partial */
+  .note-sections { margin-bottom: 1.5rem; }
+  .section-title { font-weight: bold; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .checkbox-grid { display: flex; flex-direction: column; gap: 0.75rem; }
+  .checkbox-label { display: flex; align-items: center; font-size: 0.9rem; padding: 0.5rem; background-color: var(--secondary); border-radius: 4px; }
+  .checkbox-label input[type="checkbox"] { margin-right: 0.75rem; width: 18px; height: 18px; }
+  .custom-note-form { background-color: var(--white); border: 1px solid var(--secondary); padding: 1rem; margin-top: 1rem; }
+    
+  @media screen and (min-width: 768px) { .custom-note-form { padding: 1.5rem; }}
+  @media screen and (min-width: 768px) { .checkbox-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; } }
+  @media screen and (min-width: 1024px) { .checkbox-grid { grid-template-columns: repeat(3, 1fr); } }
+  
+  .output-container { width: 100%;  background-color: var(--white); border-radius: 4px; }
+  .output-textarea { width: 100%; height: 400px; padding: 0.2rem; border: 1px solid var(--secondary); font-size: 1rem; resize: vertical; margin-bottom: 1rem; line-height: 1.5; }
+  .button-group { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+  .confirmation-message { margin-top: 1rem; padding: 0.7rem; background-color: var(--secondary); border-radius: 4px; font-size: 0.9rem; }
+  @media screen and (max-width: 600px) { .output-textarea { height: 300px; /* Slightly smaller on mobile, but still larger than before */ } .button-group { flex-direction: column; } .action-button { width: 100%; } }
+  @media screen and (min-width: 1200px) { .output-textarea { height: 500px; /* Even larger on big screens */ } }
+  
+  
+  
+  /* notes.py select assistant */
+  .submit-container { display: flex; align-items: center; margin-top: 1rem; }
+  .action-button.primary { background-color: var(--primary); color: var(--white); border: none; padding: 0.7rem 1.2rem; text-transform: uppercase; letter-spacing: 0.1em; font-size: 1rem; cursor: pointer; transition: background-color 0.3s ease; }
+  .action-button.primary:hover, .action-button.primary:focus { background-color: var(--text); }
+  /* .htmx-indicator { display: none; margin-left: 1rem; width: 24px; height: 24px; }
+  .htmx-request .htmx-indicator { display: inline-block; } */
+  @media screen and (max-width: 600px) { .submit-container { flex-direction: column; align-items: flex-start; } .action-button.primary { width: 100%; } .htmx-indicator { margin-left: 0; margin-top: 0.5rem; } }
+  
+  .htmx-indicator{ opacity:0; transition: opacity 500ms ease-in; display: inline-block;}
+  .htmx-request .htmx-indicator{  opacity:1; margin-left: 1rem; width: 24px; height: 24px; }
+  

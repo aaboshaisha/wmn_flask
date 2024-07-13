@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %} WriteMyNotes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='htmx.js') }}"></script>
+</head>
+
+<body>
+    <header class="main-header">
+        <h1>Write My Notes</h1>
+        <button class="menu-toggle" aria-label="Toggle menu">☰</button>
+    </header>
+
+    <div class="grid-container">
+        <nav class="main-nav" id="main-nav">
+            <ul>
+                {% if g.user %}
+                <li><a href="{{ url_for('notes.main') }}">Main Page</a></li>
+                <li><a href="{{ url_for('payment.customer_portal') }}">Account</a></li>
+                <li><a href="{{ url_for('auth.logout') }}">Log Out</a></li>
+                {% else %}
+                <li><a href="{{ url_for('auth.register') }}">Register</a></li>
+                <li><a href="{{ url_for('auth.login') }}">Log In</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+
+        <main class="content">
+            <header class="page-header">
+                {% block header %}{% endblock %}
+            </header>
+
+            {% for message in get_flashed_messages() %}
+            <div class="flash">{{ message }}</div>
+            {% endfor %}
+
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <footer class="main-footer">
+        <nav class="footer-nav">
+            <ul>
+                <li><a href="#">Privacy</a></li>
+                <li><a href="#">Terms</a></li>
+            </ul>
+        </nav>
+        <p class="copyright">© 2024 WriteMyNotes. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const mainNav = document.getElementById('main-nav');
+
+            menuToggle.addEventListener('click', function () {
+                mainNav.classList.toggle('active');
+            });
+
+            // Close menu when clicking outside of it
+            document.addEventListener('click', function (event) {
+                const isClickInside = mainNav.contains(event.target) || menuToggle.contains(event.target);
+                if (!isClickInside && mainNav.classList.contains('active')) {
+                    mainNav.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

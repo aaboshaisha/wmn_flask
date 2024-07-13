@@ -1,0 +1,16 @@
+<div class="output-container">
+    <textarea id="output" name="output" class="output-textarea">{{ output }}</textarea>
+    <div class="button-group">
+        <button class="action-button secondary" onclick="document.getElementById('output').value=''">Clear</button>
+        <button class="action-button secondary" 
+        onclick="navigator.clipboard.writeText(document.getElementById('output').value)
+        .then(() => alert('Copied to clipboard'))">Copy</button>
+        <button 
+            class="action-button"
+            hx-post="/send"
+            hx-include="[name=output]"
+            hx-target="#email-confirmation-msg"
+        >Send to email</button>
+    </div>
+    <div id="email-confirmation-msg" class="confirmation-message"></div>
+</div>
