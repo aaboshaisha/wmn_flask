@@ -70,57 +70,17 @@ def select_assistant():
             </div>
         """)
 
-
-# def get_completion(client, prompt, assistant, model="gpt-3.5-turbo"):
-#     messages = [ 
-#         {"role": "system", "content": "You are an expert in writing medical notes. You never speak about context."},
-#         {"role": "user", "content": prompt}, 
-#         {"role": "assistant", "content": assistant}]
-#     response = client.chat.completions.create(model='gpt-4o', messages=messages, temperature=0)
-#     return response.choices[0].message
-
-# @bp.route('/handle_assistant', methods=['POST'])
-# @login_required
-# def handle_assistant():
-#     openai_api_key = current_app.config.get('OPENAI_API_KEY')
-#     if not openai_api_key:
-#         return jsonify({"error": "OpenAI API key not found in app configuration"}), 500
-#     openai_client = OpenAI(api_key=openai_api_key)
-    
-#     selected_assistant = session.get('selected_assistant')
-#     assistant = assistants[selected_assistant]
-
-#     if assistant == custom_assistant:
-#         note_sections = request.form.getlist('sections')
-#         writing_style = request.form.get('writing_style', '')
-#         assistant = assistant(note_sections=note_sections, writing_style=writing_style)
-    
-#     message = request.form.get('transcription-output') 
-#     if not message:
-#         return jsonify({"error": "No transcription found"}), 400
-
-#     prompt = f"Rewrite {message}"
-#     response = get_completion(client=openai_client, prompt=prompt, assistant=assistant)
-#     response_content = response.content.replace('*', '')
-
-#     # update usage measur
-#     calculate_and_update_word_count(assistant, response_content)
-    
-#     return render_template('notes/output_partial.html', output = response_content)
-
-
 def get_claude_completion(clinical_notes, assistant, client, model="claude-3-haiku-20240307"):
     message = client.messages.create(
         model=model,
         max_tokens=1000,
         temperature=0,
-        system="You are an expert in writing medical notes. You never speak about context.",
+        system="You are an expert in writing medical notes. NEVER speak about context. Only include information if provided in input text. JUST PROVIDE THE OUTPUT",
         messages=[ { "role": "user", "content": [ { "type": "text", "text": assistant(clinical_notes), } ] } ])
-    plain_text = re.sub(r'<[^>]+>', '', message.content[0].text)
     # update usage measure
     total_word_count = message.usage.input_tokens + message.usage.output_tokens
     calculate_and_update_word_count(total_word_count)
-    return plain_text
+    return message.content[0].text
 
 
 @bp.route('/handle_assistant', methods=['POST'])
@@ -138,13 +98,12 @@ def handle_assistant():
     if assistant == custom_assistant:
         note_sections = request.form.getlist('sections')
         writing_style = request.form.get('writing_style', '')
-        assistant = assistant(note_sections=note_sections, writing_style=writing_style)
+        assistant = assistant(SECTIONS_FORMATTED=note_sections, WRITING_STYLE=writing_style)
     
     message = request.form.get('transcription-output') 
     if not message:
         return jsonify({"error": "No transcription found"}), 400
 
-    prompt = f"Rewrite {message}"
-    response = get_claude_completion(client=anthropic_client, clinical_notes=assistant)
+    response = get_claude_completion(clinical_notes=message, assistant=assistant,client=anthropic_client)
     
     return render_template('notes/output_partial.html', output = response)

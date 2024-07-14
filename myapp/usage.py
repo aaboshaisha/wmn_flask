@@ -1,6 +1,5 @@
 from flask import g, redirect, url_for, current_app, flash
 from pydub import AudioSegment
-import io
 import re
 from myapp.db import get_db
 from werkzeug.exceptions import InternalServerError
@@ -24,12 +23,55 @@ def get_or_initialize_total_audio_length():
         g.total_audio_length = 0
     return g.total_audio_length
 
+# def calculate_and_update_audio_length(audio_buffer):
+#     audio = AudioSegment.from_file(audio_buffer, format="webm")
+#     audio_length_seconds = len(audio) / 1000  # Convert milliseconds to seconds
+#     g.total_audio_length = get_or_initialize_total_audio_length() + audio_length_seconds
+#     update_user_database_and_check_limits('audio_length', g.total_audio_length)
+#     return g.total_audio_length
+
+import io
+from opuslib import Decoder
+
+def find_opus_data(webm_data):
+    opus_start = webm_data.find(b'OpusHead')
+    if opus_start == -1:
+        raise ValueError("Opus data not found in WebM container")
+    return webm_data[opus_start:]
+
 def calculate_and_update_audio_length(audio_buffer):
-    audio = AudioSegment.from_file(audio_buffer, format="webm")
-    audio_length_seconds = len(audio) / 1000  # Convert milliseconds to seconds
+    # Read WebM container
+    webm_data = audio_buffer.read()
+    
+    try:
+        opus_data = find_opus_data(webm_data)
+    except ValueError as e:
+        print(f"Error: {e}")
+        return 0
+
+    # Decode Opus
+    decoder = Decoder(48000, 1)
+    pcm = bytearray()
+    offset = 0
+    frame_size = 960  # 20ms at 48kHz
+
+    while offset < len(opus_data):
+        chunk = opus_data[offset:offset+frame_size]
+        offset += frame_size
+        try:
+            decoded = decoder.decode(chunk, frame_size)
+            pcm.extend(decoded)
+        except Exception as e:
+            print(f"Error decoding frame: {e}")
+            continue  # Skip this frame and continue with the next
+
+    # Calculate length
+    audio_length_seconds = len(pcm) / (48000 * 2)  # 48kHz, 16-bit
+
     g.total_audio_length = get_or_initialize_total_audio_length() + audio_length_seconds
     update_user_database_and_check_limits('audio_length', g.total_audio_length)
     return g.total_audio_length
+
 
 def get_or_initialize_total_words():
     if 'total_words' not in g:
@@ -40,8 +82,8 @@ def count_alphabetic_words(text):
     words = re.sub(r'[^a-zA-Z\s]', '', text).split()
     return len(words)
 
-def calculate_and_update_word_count(prompt, response):
-    g.total_words = get_or_initialize_total_words() + count_alphabetic_words(prompt) + count_alphabetic_words(response)
+def calculate_and_update_word_count(response_count):
+    g.total_words = get_or_initialize_total_words() + response_count
     update_user_database_and_check_limits('word_count', g.total_words)
     return g.total_words
 
