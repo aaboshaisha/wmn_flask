@@ -1,26 +1,62 @@
 from flask import Blueprint, current_app, request, g, redirect, url_for
-from flask_mail import Message
-from . import mail
 from myapp.auth import login_required
+import smtplib
+from email.mime.text import MIMEText
 
 bp = Blueprint('email', __name__)
 
-@login_required
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+def send_email(subject, body, to_email):
+    smtp_server = os.getenv('SMTP_SERVER')
+    smtp_port = os.getenv('SMTP_PORT')
+    smtp_username = os.getenv('SMTP_USERNAME')
+    smtp_password = os.getenv('SMTP_PASSWORD')
+
+    msg = MIMEText(body)
+    msg['Subject'] = subject
+    msg['From'] = smtp_username
+    msg['To'] = to_email
+
+    with smtplib.SMTP(smtp_server, smtp_port) as server:
+        server.starttls()
+        server.login(smtp_username, smtp_password)
+        server.send_message(msg)
+
 @bp.route('/send', methods=['POST'])
+@login_required
 def send():
     if g.user is None:
         return redirect(url_for('auth.login'))
     user_email = g.user['email']
-    msg = Message(
-        'writemynotes - Your Clinical Note',
-        sender = 'info@writemynotes.co.uk',
-        # recipients=['amralaauk@icloud.com'] #for testing
-        recipients=[user_email]
-    )
-    msg.body = request.form.get('output')
-
     try:
-        mail.send(msg)
-        return 'Email sent successfully'
+        send_email("writemynotes - Your Clinical Note", request.form.get('output'), user_email)
+        return "Email sent successfully!"
     except Exception as e:
-        return f'An error has occured while trying to send email: {str(e)}'
+       return f'An error has occured while trying to send email: {str(e)}' 
+
+
+# from postmarker.core import PostmarkClient
+
+# @login_required
+# @bp.route('/send', methods=['POST'])
+# def send():
+#     if g.user is None:
+#         return redirect(url_for('auth.login'))
+#     user_email = g.user['email']
+#     # Create an instance of the Postmark client
+#     postmark = PostmarkClient(server_token=current_app.config.get('POSTMARK_SERVER_API_TOKEN'))
+
+#     try:
+#         # Send an email
+#         postmark.emails.send(
+#         From='support@writemynotes.co.uk',
+#         To=user_email,
+#         Subject='writemynotes - Your Clinical Note',
+#         HtmlBody=f"<html><body>{request.form.get('output')}</body></html>"
+#         )
+#         return 'Email sent successfully'
+#     except Exception as e:
+#         return f'An error has occured while trying to send email: {str(e)}'
