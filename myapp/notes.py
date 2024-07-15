@@ -1,13 +1,12 @@
 from flask import (Blueprint, render_template, request, current_app, g, flash, redirect, url_for,
                    jsonify, session, render_template_string)
-import io
-from openai import OpenAI
 from .assistants import *
 import anthropic
-import re
 from myapp.auth import login_required
 from myapp.usage import calculate_and_update_audio_length, calculate_and_update_word_count
-from pydub import AudioSegment
+import speech_recognition as sr
+import tempfile
+import os
 
 assistants = {
     "patient_assistant": patient_assistant,
@@ -25,39 +24,6 @@ bp = Blueprint('notes', __name__, url_prefix='/notes')
 def main():
     return render_template('notes/main.html')
 
-import speech_recognition as sr
-import tempfile
-import os
-
-# @bp.route('/transcribe', methods=['POST'])
-# @login_required
-# def transcribe():
-#     openai_api_key = current_app.config.get('OPENAI_API_KEY')
-#     if not openai_api_key:
-#         return jsonify({"error": "OpenAI API key not found in app configuration"}), 500
-#     openai_client = OpenAI(api_key=openai_api_key)
-    
-#     file = request.files['audio']
-#     file_extension = file.filename.split('.')[-1].lower()
-    
-#     if file_extension == 'webm':
-#         # WebM can be sent directly to OpenAI
-#         buffer = io.BytesIO(file.read())
-#         buffer.name = "audio.webm"
-#     elif file_extension == 'mp4':
-#         # Convert MP4 to WebM
-#         audio = AudioSegment.from_file(io.BytesIO(file.read()), format="mp4")
-#         buffer = io.BytesIO()
-#         audio.export(buffer, format="webm")
-#         buffer.name = "audio.webm"
-#         buffer.seek(0)
-#     else:
-#         return jsonify({"error": "Unsupported file format"}), 400
-    
-#     calculate_and_update_audio_length(buffer)
-    
-#     transcription = openai_client.audio.transcriptions.create(model='whisper-1', file=buffer)
-#     return {'output': transcription.text}
 
 @bp.route('/transcribe', methods=['POST'])
 @login_required
@@ -71,10 +37,11 @@ def transcribe():
         temp_audio_path = temp_audio.name
     
     try:
+        calculate_and_update_audio_length(temp_audio_path)
         with sr.AudioFile(temp_audio_path) as source:
             audio_data = r.record(source)
         
-        # Use Whisper API for transcription
+            # Use Whisper API for transcription
             openai_api_key = current_app.config.get('OPENAI_API_KEY')
             if not openai_api_key: return jsonify({"error": "OpenAI API key not found in app configuration"}), 500
         text = r.recognize_whisper_api(audio_data, api_key=openai_api_key)
