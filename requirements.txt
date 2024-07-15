@@ -23,7 +23,6 @@ MarkupSafe==2.1.5
 openai==1.35.13
 opuslib==3.0.1
 packaging==24.1
-PyAudio==0.2.14
 pydantic==2.8.2
 pydantic_core==2.20.1
 pydub==0.25.1
