@@ -7,6 +7,7 @@ import anthropic
 import re
 from myapp.auth import login_required
 from myapp.usage import calculate_and_update_audio_length, calculate_and_update_word_count
+from pydub import AudioSegment
 
 assistants = {
     "patient_assistant": patient_assistant,
@@ -22,9 +23,6 @@ bp = Blueprint('notes', __name__, url_prefix='/notes')
 @bp.route('/main', methods=['GET', 'POST'])
 @login_required
 def main():
-    # if g.user['subscription_status'] == 'exceeded':
-    #     flash('You have exceeded your usage limit. Please update your subscription to continue.', 'warning')
-    #     return redirect(url_for('payment.customer_portal'))
     return render_template('notes/main.html')
 
 
@@ -36,13 +34,26 @@ def transcribe():
         return jsonify({"error": "OpenAI API key not found in app configuration"}), 500
     openai_client = OpenAI(api_key=openai_api_key)
     
-    file = request.files['audio'] # get the audio file from request object
-    buffer = io.BytesIO(file.read()) # read it and put in a format that openai can use
-    buffer.name = "audio.webm"
-    # update usage
+    file = request.files['audio']
+    file_extension = file.filename.split('.')[-1].lower()
+    
+    if file_extension == 'webm':
+        # WebM can be sent directly to OpenAI
+        buffer = io.BytesIO(file.read())
+        buffer.name = "audio.webm"
+    elif file_extension == 'mp4':
+        # Convert MP4 to WebM
+        audio = AudioSegment.from_file(io.BytesIO(file.read()), format="mp4")
+        buffer = io.BytesIO()
+        audio.export(buffer, format="webm")
+        buffer.name = "audio.webm"
+        buffer.seek(0)
+    else:
+        return jsonify({"error": "Unsupported file format"}), 400
+    
     calculate_and_update_audio_length(buffer)
     
-    transcription = openai_client.audio.transcriptions.create(model='whisper-1',file=buffer)
+    transcription = openai_client.audio.transcriptions.create(model='whisper-1', file=buffer)
     return {'output': transcription.text}
 
 
