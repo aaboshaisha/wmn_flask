@@ -1,45 +1,69 @@
-const record = document.getElementById('record-button');
-const output = document.getElementById('transcription-output');
 
-// adjust audio recording according to browser compatability
-const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+let recorder;
+let isRecording = false;
+const recordButton = document.getElementById('record-button');
+const status = document.getElementById('status');
+const result = document.getElementById('transcription-output');
 
-const getMimeType = () => {
-    if (isSafari) { return 'audio/mp4';}
-    return 'audio/webm';};
+recordButton.addEventListener('click', toggleRecording);
 
-const mimeType = getMimeType();
-const options = { mimeType: mimeType };
-
-const onMediaSuccess = function (stream) {
-    const mediaRecorder = new MediaRecorder(stream, options);
-    record.onclick = function () {
-        if (mediaRecorder.state == 'recording') {
-            mediaRecorder.stop(); record.style.background = ""; record.style.color = "";
-        } else {
-            mediaRecorder.start(); record.style.background = "red"; record.style.color = "black";
-        }
-    }
-    let chunks = [];
-    mediaRecorder.ondataavailable = function (e) { chunks.push(e.data); }
-    mediaRecorder.onstop = function () {
-        let blob = new Blob(chunks, { type: mimeType });
-        chunks = [];
-        let formData = new FormData();
-        formData.append("audio", blob, isSafari ? "audio.mp4" : "audio.webm");
-        fetch("/notes/transcribe", { method: "POST", body: formData })
-            .then((response) => response.json())
-            .then((data) => { output.value += data.output + "\n"; })
-            .catch((error) => { console.error('Error:', error); });
+function toggleRecording() {
+    if (isRecording) {
+        stopRecording();
+    } else {
+        startRecording();
     }
 }
 
-const onMediaFailure = function (err) { alert(err); }
-
-if (navigator.mediaDevices.getUserMedia) {
+function startRecording() {
     navigator.mediaDevices.getUserMedia({ audio: true })
-        .then(onMediaSuccess)
-        .catch(onMediaFailure);
-} else {
-    alert("getUserMedia is not supported on your browser.");
+        .then(function (stream) {
+            recorder = RecordRTC(stream, {
+                type: 'audio',
+                mimeType: 'audio/webm',
+                sampleRate: 44100,
+                desiredSampRate: 16000,
+                recorderType: RecordRTC.StereoAudioRecorder,
+                numberOfAudioChannels: 1
+            });
+            recorder.startRecording();
+            isRecording = true;
+            recordButton.textContent = 'Stop Recording';
+            status.textContent = 'Recording...';
+        });
+}
+
+function stopRecording() {
+    recorder.stopRecording(function () {
+        let blob = recorder.getBlob();
+        uploadAudio(blob);
+        isRecording = false;
+        recordButton.textContent = 'Start Recording';
+        status.textContent = 'Processing...';
+    });
+}
+
+function uploadAudio(blob) {
+    let formData = new FormData();
+    formData.append('audio', blob, 'recording.wav');
+
+    fetch('/notes/transcribe', {
+        method: 'POST',
+        body: formData
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.output) {
+                result.value += data.output + "\n";
+            } else if (data.error) {
+                result.textContent = 'Error: ' + data.error;
+            }
+
+            status.textContent = '';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            result.textContent = 'An error occurred during transcription.';
+            status.textContent = '';
+        });
 }

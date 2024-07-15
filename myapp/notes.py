@@ -25,36 +25,64 @@ bp = Blueprint('notes', __name__, url_prefix='/notes')
 def main():
     return render_template('notes/main.html')
 
+import speech_recognition as sr
+import tempfile
+import os
+
+# @bp.route('/transcribe', methods=['POST'])
+# @login_required
+# def transcribe():
+#     openai_api_key = current_app.config.get('OPENAI_API_KEY')
+#     if not openai_api_key:
+#         return jsonify({"error": "OpenAI API key not found in app configuration"}), 500
+#     openai_client = OpenAI(api_key=openai_api_key)
+    
+#     file = request.files['audio']
+#     file_extension = file.filename.split('.')[-1].lower()
+    
+#     if file_extension == 'webm':
+#         # WebM can be sent directly to OpenAI
+#         buffer = io.BytesIO(file.read())
+#         buffer.name = "audio.webm"
+#     elif file_extension == 'mp4':
+#         # Convert MP4 to WebM
+#         audio = AudioSegment.from_file(io.BytesIO(file.read()), format="mp4")
+#         buffer = io.BytesIO()
+#         audio.export(buffer, format="webm")
+#         buffer.name = "audio.webm"
+#         buffer.seek(0)
+#     else:
+#         return jsonify({"error": "Unsupported file format"}), 400
+    
+#     calculate_and_update_audio_length(buffer)
+    
+#     transcription = openai_client.audio.transcriptions.create(model='whisper-1', file=buffer)
+#     return {'output': transcription.text}
 
 @bp.route('/transcribe', methods=['POST'])
 @login_required
 def transcribe():
-    openai_api_key = current_app.config.get('OPENAI_API_KEY')
-    if not openai_api_key:
-        return jsonify({"error": "OpenAI API key not found in app configuration"}), 500
-    openai_client = OpenAI(api_key=openai_api_key)
+    r = sr.Recognizer()
+    if 'audio' not in request.files: return jsonify({'error': 'No audio file provided'}), 400
+    audio_file = request.files['audio']
     
-    file = request.files['audio']
-    file_extension = file.filename.split('.')[-1].lower()
+    with tempfile.NamedTemporaryFile(delete=False, suffix='.wav') as temp_audio:
+        audio_file.save(temp_audio.name)
+        temp_audio_path = temp_audio.name
     
-    if file_extension == 'webm':
-        # WebM can be sent directly to OpenAI
-        buffer = io.BytesIO(file.read())
-        buffer.name = "audio.webm"
-    elif file_extension == 'mp4':
-        # Convert MP4 to WebM
-        audio = AudioSegment.from_file(io.BytesIO(file.read()), format="mp4")
-        buffer = io.BytesIO()
-        audio.export(buffer, format="webm")
-        buffer.name = "audio.webm"
-        buffer.seek(0)
-    else:
-        return jsonify({"error": "Unsupported file format"}), 400
-    
-    calculate_and_update_audio_length(buffer)
-    
-    transcription = openai_client.audio.transcriptions.create(model='whisper-1', file=buffer)
-    return {'output': transcription.text}
+    try:
+        with sr.AudioFile(temp_audio_path) as source:
+            audio_data = r.record(source)
+        
+        # Use Whisper API for transcription
+            openai_api_key = current_app.config.get('OPENAI_API_KEY')
+            if not openai_api_key: return jsonify({"error": "OpenAI API key not found in app configuration"}), 500
+        text = r.recognize_whisper_api(audio_data, api_key=openai_api_key)
+        return jsonify({'output': text})
+    except sr.RequestError as e:
+        return jsonify({'error': f'Could not request results from Whisper API; {str(e)}'}), 500
+    finally:
+        os.unlink(temp_audio_path)
 
 
 @bp.route("/select_assistant", methods=['POST'])
