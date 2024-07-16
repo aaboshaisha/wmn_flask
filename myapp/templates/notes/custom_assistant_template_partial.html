@@ -1,0 +1,11 @@
+<div class="submit-container">
+    <button id="send-transcription" 
+            class="action-button primary"
+            hx-post="/notes/handle_assistant" 
+            hx-target="#assistant-output"
+            hx-include="[name=transcription-output]"
+            hx-indicator="#spinner">
+        Submit
+    </button>
+    <img id="spinner" class="htmx-indicator" src="{{ url_for('static', filename='bars.svg') }}" alt="Loading...">
+</div>

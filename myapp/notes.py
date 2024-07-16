@@ -62,19 +62,14 @@ def select_assistant():
     if selected_assistant == 'custom_assistant':
         return render_template('/notes/custom_notes_partial.html')
     else:
-        return render_template_string("""
-        <div class="submit-container">
-                <button id="send-transcription" 
-                        class="action-button primary"
-                        hx-post="/notes/handle_assistant" 
-                        hx-target="#assistant-output"
-                        hx-include="[name=transcription-output]"
-                        hx-indicator="#spinner">
-                    Submit
-                </button>
-                <img id="spinner" class="htmx-indicator" src="{{ url_for('static', filename='bars.svg') }}" alt="Loading...">
-            </div>
-        """)
+        return render_template('/notes/custom_assistant_template_partial.html')
+    
+@bp.route("/select_mode")
+@login_required
+def select_mode():
+    mode = request.args.get('mode')
+    if mode == 'templates': return render_template('/notes/template_dropdown_partial.html')
+    elif mode == 'custom': return render_template('/notes/create_your_own_partial.html')
 
 def get_claude_completion(clinical_notes, assistant, client, model="claude-3-haiku-20240307"):
     message = client.messages.create(

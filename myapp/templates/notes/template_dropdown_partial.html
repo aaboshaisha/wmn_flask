@@ -1,0 +1,20 @@
+<div class="note-selection">
+    <select id="assistant-selector"
+    name="assistant" 
+    hx-post="/notes/select_assistant" 
+    hx-include="this"
+    hx-trigger="change"
+    hx-target="#note-options"
+    hx-swap="innerHTML"
+    class="select-input">
+        <option value="" disabled selected>Select note type:</option>
+        <option value="patient_assistant">Patient Letter</option>
+        <option value="gp_assistant_1">GP Letter 1</option>
+        <option value="gp_assistant_2">GP Letter 2</option>
+        <option value="sbard_assistant">SBAR Note</option>
+        <option value="custom_assistant"
+        hx-post="/notes/custom_assistant">Custom Note</option>
+    </select>
+    <div id="note-options" class="note-options"></div>
+    <div id="custom-note-options" class="custom-note-options"></div>
+</div>
