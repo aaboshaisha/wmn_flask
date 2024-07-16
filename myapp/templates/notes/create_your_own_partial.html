@@ -1,15 +1,32 @@
-<form>
+<form 
+hx-post="/notes/handle_assistant"
+hx-target="#assistant-output" 
+hx-include="[name=transcription-output]"
+hx-indicator="#spinner">
+    <input type="hidden" name="create_your_own_assistant" value="create_your_own_assistant">
     <div class="form-group">
         <label for="occupation">Occupation</label>
-        <input name="occupation" id="occupation" required placeholder="eg psychiatrist, nurse, occupational therapist, ...">
+        <input name="occupation" id="occupation" required
+            placeholder="eg psychiatrist, nurse, occupational therapist, ...">
     </div>
 
     <div class="form-group">
         <label for="sections">Sections</label>
-        <input name="sections" id="sections" required placeholder="insert as comma-separated values eg MSE, Risk, Plan, ...">
+        <input name="sections" id="sections" required
+            placeholder="insert as comma-separated values eg MSE, Risk, Plan, ...">
     </div>
 
     <div class="form-group">
-        <input type="submit" value="Submit" class="submit-btn">
+        <select id="writing-style-select" name="writing_style" class="select-input">
+            <option value="">Select Writing Style:</option>
+            <option value="Clear and Concise">Clear and Concise</option>
+            <option value="Professional and Formal">Professional and Formal</option>
+            <option value="Detailed and Comprehensive">Detailed and Comprehensive</option>
+        </select>
+    </div>
+    <br>
+    <div class="form-group">
+        <button type="submit" class="action-button">Submit</button>
+        <img id="spinner" class="htmx-indicator" src="{{ url_for('static', filename='bars.svg') }}">
     </div>
 </form>

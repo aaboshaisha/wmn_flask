@@ -14,6 +14,7 @@ assistants = {
     "gp_assistant_2": gp_assistant_2,
     "sbard_assistant": sbard_assistant,
     "custom_assistant": custom_assistant,
+    "create_your_own_assistant": create_your_own_assistant,
 }
 
 
@@ -62,7 +63,7 @@ def select_assistant():
     if selected_assistant == 'custom_assistant':
         return render_template('/notes/custom_notes_partial.html')
     else:
-        return render_template('/notes/custom_assistant_template_partial.html')
+        return render_template('/notes/assistant_submit_button.html')
     
 @bp.route("/select_mode")
 @login_required
@@ -90,17 +91,27 @@ def handle_assistant():
     anthropic_api_key = current_app.config.get('ANTHROPIC_API_KEY')
     if not anthropic_api_key:
         return jsonify({"error": "Anthropic API key not found in app configuration"}), 500
-    
     anthropic_client = anthropic.Anthropic(api_key=anthropic_api_key)
     
-    selected_assistant = session.get('selected_assistant')
-    assistant = assistants[selected_assistant]
+    if 'create_your_own_assistant' in request.form: # if create-your-own-asssistant
+        assistant_key = request.form['create_your_own_assistant']
+        occupation = request.form.get('occupation')
+        note_sections = request.form.get('sections')
+        writing_style = request.form.get('writing_style')
+        assistant_fn = assistants[assistant_key]
+        assistant = assistant_fn(OCCUPATION=occupation, SECTIONS_FORMATTED=note_sections, WRITING_STYLE=writing_style)
+        
 
-    if assistant == custom_assistant:
-        note_sections = request.form.getlist('sections')
-        writing_style = request.form.get('writing_style', '')
-        assistant = assistant(SECTIONS_FORMATTED=note_sections, WRITING_STYLE=writing_style)
+    else: # if using template dorpdown menu
+        selected_assistant = session.get('selected_assistant')
+        assistant = assistants[selected_assistant]
+
+        if assistant == custom_assistant:
+            note_sections = request.form.getlist('sections')
+            writing_style = request.form.get('writing_style', '')
+            assistant = assistant(SECTIONS_FORMATTED=note_sections, WRITING_STYLE=writing_style)
     
+    print(assistant)
     message = request.form.get('transcription-output') 
     if not message:
         return jsonify({"error": "No transcription found"}), 400

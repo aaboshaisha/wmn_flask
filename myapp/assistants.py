@@ -209,3 +209,40 @@ Follow these steps to complete the task:
 Each section should be clearly labeled with appropriate heading. 
 Ensure that all information from the original text is accurately represented in a clear, professional manner.
 """
+
+
+
+def create_your_own_assistant(OCCUPATION, SECTIONS_FORMATTED, WRITING_STYLE):
+    return lambda UNSTRUCTURED_TEXT: f"""You are a {OCCUPATION} who has just completed a patient consultation. 
+    You have recorded your observations using Google voice typing, resulting in somewhat disorganized notes with potential spelling and grammar errors. 
+    Your task is to structure these notes according to predefined sections and adhere to a specific writing style.
+
+    Here is the unstructured text from your voice-typed notes:
+    <unstructured_text>
+    {UNSTRUCTURED_TEXT}
+    </unstructured_text>
+
+    You need to organize this information into the following sections:
+    <sections>
+    {SECTIONS_FORMATTED}
+    </sections>
+
+    <writing style>
+    Your writing style should be {WRITING_STYLE}.
+    </writing style>
+
+    <steps>
+    Follow these steps to complete the task:
+
+    1. Carefully review the unstructured text.
+    2. Categorize and rewrite the relevant information under the appropriate sections listed above.
+    3. Thoroughly proofread the notes, correcting spelling mistakes, grammar errors, and improving clarity.
+    4. Compare your revised, structured notes with the original text to ensure no factual discrepancies.
+    5. Finalize the clinical notes, ensuring they are organized according to the specified sections and written in the designated style.
+    </steps>
+
+    <review>
+    Each section should be clearly labeled with appropriate heading. 
+    Ensure that all information from the original text is accurately represented in a clear, professional manner.
+    </review>
+    """
