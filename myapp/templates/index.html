@@ -1,44 +1,51 @@
 {% extends 'base.html' %}
 {% block header %}
-<h1>Transform Your Voice into Structured Clinical Notes</h1>
+<h1>Cut Your Clinical Documentation Time to Less Than 5 Minutes</h1>
 {% endblock %}
 {% block content %}
-<section id="problem">
-    <h2>Clinicians now spend 25% more time on documentation compared to 2015</h2>
+<section id="features">
+    <h2>AI-Powered Clinical Note Generation</h2>
     <div class="card-grid">
         <div class="card">
-            <p><strong>Get a Personal Dictation Assistant:</strong> Our app serves as a virtual secretary, offering clinicians
-                without dedicated secretarial support a convenient tool for dictation.</p>
+            <p><strong>Create Notes Effortlessly:</strong> Finished your patient review? Just talk into the microphone. No
+                need to worry about ordering your thoughts, typing, spelling, or grammar. Simply dictate your notes and let our AI proofread, organize, and
+                structure them.</p>
         </div>
         <div class="card">
-            <p><strong>Take control of your time:</strong> Transforming dictation into structured notes reduces documentation time to under 5 minutes, freeing up valuable time for patient care.</p>
+            <p><strong>Customize Your Templates:</strong> Choose from our pre-made templates or create your own by
+                specifying the sections you want in your notes.</p>
         </div>
         <div class="card">
-            <p><strong>Style and Language Support:</strong> Our app helps you produce grammatically correct and
-                well-structured notes, ensuring clear communication.</p>
+            <p><strong>Generate Versatile Outputs:</strong> Transform the same recording into various note types: SBAR notes, GP
+                letters, or patient-friendly letters free of medical jargon.</p>
         </div>
         <div class="card">
-            <p><strong>Reduce the Burnout:</strong> By cutting down documentation time and effort, our app helps
-                alleviate the administrative burden, contributing to lower burnout levels.</p>
+            <p><strong>Adapt it to Your Role:</strong> Whether you're a doctor, nurse, occupational therapist,
+                physiotherapist, psychologist, or pharmacist, you can shape the notes to fit your specific output needs.
+            </p>
         </div>
     </div>
 </section>
+
 <section id="how-it-works">
     <h2>How WriteMyNotes works?</h2>
     <h3>Surprisingly Easy: </h3>
     <div class="card-grid">
         <div class="card">
+            <img src="{{ url_for('static', filename='images/wmn_p1_gif.gif') }}" alt="Recording notes" class="card-gif">
             <p><strong>1- Record</strong> Press record to dictate your notes.</p>
         </div>
         <div class="card">
-            <p><strong>2- Choose template</strong> Choose from pre-defined templates (e.g., SBARD notes, GP letters,
-                Patient Letters) or customize your own, ensuring consistent and clear documentation.</p>
+            <img src="{{ url_for('static', filename='images/wmn_p2_gif.gif') }}" alt="Choosing template" class="card-gif">
+            <p><strong>2- Choose template</strong> Choose from pre-defined templates or customize your own.</p>
         </div>
         <div class="card">
+            <img src="{{ url_for('static', filename='images/wmn_p3_gif.gif') }}" alt="Output notes" class="card-gif">
             <p><strong>3- Output</strong> Click submit and see your structured notes show up.</p>
         </div>
     </div>
 </section>
+
 <section id="pricing">
     <h2>Pricing Plans</h2>
     <div class="card-grid">
