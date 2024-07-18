@@ -48,6 +48,9 @@ def create_app(test_config=None): # option to pass configurations specific for t
     from . import email
     app.register_blueprint(email.bp)
     
+    @app.route('/faq')
+    def faq():
+        return render_template('faq.html')
     @app.route('/')
     def index():
         return render_template('index.html')

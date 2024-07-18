@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}FAQ - {% endblock %}
+
+{% block header %}
+    <h2>Frequently Asked Questions</h2>
+{% endblock %}
+
+{% block content %}
+    <div class="faq-container">
+        <div class="faq-item">
+            <h3>How does the subscription and free trial work?</h3>
+            <p>Our app operates on a subscription basis. All new users start with a 7-day free trial period, allowing you to explore the app's features without any charge.</p>
+        </div>
+
+        <div class="faq-item">
+            <h3>What happens if I cancel my subscription?</h3>
+            <p>If you cancel your subscription, you can continue to use the app until the end of your current subscription period. No further charges will be applied.</p>
+        </div>
+
+        <div class="faq-item">
+            <h3>Will I be charged if I cancel during the free trial?</h3>
+            <p>No, if you cancel within the 7-day trial period, you will not be charged anything.</p>
+        </div>
+
+        <div class="faq-item">
+            <h3>Why does the app sometimes produce nonsensical text from my voice notes?</h3>
+            <p>The app uses AI for speech-to-text conversion, which can occasionally result in errors. If you encounter nonsensical text, we recommend recording your note again to get a correct transcription.</p>
+        </div>
+
+        <div class="faq-item">
+            <h3>Can the AI insert information that wasn't in my original dictation?</h3>
+            <p>Yes, this is possible. The AI that converts transcription text into structured clinical notes can sometimes produce "hallucinations" - inserting information not present in the original text. We continuously work to minimize this, but it's not perfect. To address this, users can edit all content, including the AI-generated output.</p>
+        </div>
+
+        <div class="faq-item">
+            <h3>How can I contribute to the app's development?</h3>
+            <p>User feedback is crucial for us. We continuously develop the app and implement features requested by a significant portion of our users. Your input helps shape the future of the app.</p>
+        </div>
+
+        <div class="faq-item">
+            <h3>Is it safe to record patient information in the app?</h3>
+            <p>For privacy preservation, we strongly advise all users not to record any patient-identifiable data within the app.</p>
+        </div>
+
+        <div class="faq-item">
+            <h3>What should I do if I need help or have suggestions?</h3>
+            <p>We value your input and are here to help. If you need assistance or have suggestions for improvement, please contact our support team through [insert preferred contact method].</p>
+        </div>
+    </div>
+{% endblock %}
