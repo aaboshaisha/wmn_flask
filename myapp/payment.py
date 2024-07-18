@@ -83,7 +83,7 @@ def customer_portal():
         return redirect(url_for('index'))
 
 
-endpoint_secret = 'whsec_ecd13216721967c54f8c939599a198a559158a8039415195dcbeef8a9502e8b2'
+endpoint_secret = os.getenv('STRIPE_WEBHOOK_SECRET')
 
 
 import logging
