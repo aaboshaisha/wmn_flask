@@ -2,9 +2,6 @@ from flask import Flask, render_template
 import os
 from instance.config import Config
 from flask_cors import CORS
-from flask_mail import Mail
-
-mail = Mail()
 
 def create_app(test_config=None): # option to pass configurations specific for testing 
     app = Flask(__name__, instance_relative_config=True) # create app instance
@@ -41,19 +38,13 @@ def create_app(test_config=None): # option to pass configurations specific for t
     from . import payment
     app.register_blueprint(payment.bp)
 
-    # initialize Flask-Mail
-    mail.init_app(app)
 
     # get the email blueprint
     from . import email
     app.register_blueprint(email.bp)
     
-    @app.route('/faq')
-    def faq():
-        return render_template('faq.html')
-    @app.route('/')
-    def index():
-        return render_template('index.html')
+    from . import index
+    app.register_blueprint(index.bp)
 
     CORS(app)
     

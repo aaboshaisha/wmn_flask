@@ -77,7 +77,7 @@ def login():
 @bp.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('index'))
+    return redirect(url_for('index.index'))
 
 # now we have user_id stored in session. Before requests, user should be loaded if available
 @bp.before_app_request

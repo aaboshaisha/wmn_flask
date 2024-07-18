@@ -34,6 +34,22 @@ def send():
     try:
         send_email("writemynotes - Your Clinical Note", request.form.get('output'), user_email)
         return "Email sent successfully!"
+        
+    except Exception as e:
+       return f'An error has occured while trying to send email: {str(e)}' 
+
+@bp.route('/send_feedback', methods=['POST'])
+@login_required
+def send_feedback():
+    if g.user is None:
+        return redirect(url_for('auth.login'))
+    user_email = g.user['email']
+    username = request.form.get('name')
+    email = g.user['email']
+    feedback_message = request.form.get('feedback')
+    try:
+        send_email("writemynotes - User Feedback", feedback_message , 'support@writemynotes.co.uk')
+        return redirect(url_for('index.thank_you'))
     except Exception as e:
        return f'An error has occured while trying to send email: {str(e)}' 
 

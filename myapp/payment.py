@@ -32,11 +32,14 @@ def create_checkout_session():
         return jsonify(error='Invalid plan selected'), 400
     
     try:
-        # Create a checkout session without creating a customer
+        # Create a checkout session with a 7-day free trial
         checkout_session = stripe.checkout.Session.create(
-            customer_email=email,  # Use this instead of customer ID
+            customer_email=email,
             line_items=[{'price': SUBSCRIPTION_PLANS[plan]['stripe_price_id'], 'quantity': 1}],
             mode='subscription',
+            subscription_data={
+                'trial_period_days': 7  # This adds a 7-day free trial
+            },
             success_url=f"{domain_url}/payment/success?session_id={{CHECKOUT_SESSION_ID}}",
             cancel_url=f"{domain_url}/payment/cancel"
         )
