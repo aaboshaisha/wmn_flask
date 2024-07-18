@@ -69,18 +69,18 @@ def customer_portal():
 
     if not user:
         flash('User not found', 'error')
-        return redirect(url_for('index'))
+        return redirect(url_for('index.index'))
 
     stripe.api_key = current_app.config.get('STRIPE_SECRET_KEY')
 
     try:
         session = stripe.billing_portal.Session.create(
             customer=user['stripe_customer_id'],
-            return_url=url_for('index', _external=True),)
+            return_url=url_for('index.index', _external=True),)
         return redirect(session.url)
     except Exception as e:
         flash(f'An error occurred: {str(e)}', 'error')
-        return redirect(url_for('index'))
+        return redirect(url_for('index.index'))
 
 
 endpoint_secret = os.getenv('STRIPE_WEBHOOK_SECRET')
