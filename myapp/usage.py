@@ -58,9 +58,9 @@ load_dotenv()
 import os
 
 SUBSCRIPTION_PLANS = {
-    'basic': {'name': 'Basic', 'price': 500, 'audio_limit': 12000, 'word_limit': 40000, 'stripe_price_id': os.getenv('BASIC_PRICE_ID')},
-    'standard': {'name': 'Standard', 'price': 1000, 'audio_limit': 30000, 'word_limit': 100000, 'stripe_price_id': os.getenv('STANDARD_PRICE_ID')},
-    'premium': {'name': 'Premium', 'price': 2000, 'audio_limit': 60000, 'word_limit': 200000, 'stripe_price_id': os.getenv('PREMIUM_PRICE_ID')}
+    'basic': {'name': 'Basic', 'price': 500, 'audio_limit': 7200, 'word_limit': 20000, 'stripe_price_id': os.getenv('BASIC_PRICE_ID')},
+    'standard': {'name': 'Standard', 'price': 1000, 'audio_limit': 18000, 'word_limit': 50000, 'stripe_price_id': os.getenv('STANDARD_PRICE_ID')},
+    'premium': {'name': 'Premium', 'price': 2000, 'audio_limit': 36000, 'word_limit': 100000, 'stripe_price_id': os.getenv('PREMIUM_PRICE_ID')}
 }
 
 def get_limits_by_price_id(stripe_price_id):
