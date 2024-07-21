@@ -77,7 +77,7 @@ def get_claude_completion(clinical_notes, assistant, client, model="claude-3-hai
         model=model,
         max_tokens=1000,
         temperature=0,
-        system="You are an expert in writing medical notes. NEVER speak about context. Only include information if provided in input text. JUST PROVIDE THE OUTPUT",
+        system="You are a clinician who is expert in writing medical notes. Write in active voice. NEVER speak about context. Only include information if provided in input text. JUST PROVIDE THE OUTPUT",
         messages=[ { "role": "user", "content": [ { "type": "text", "text": assistant(clinical_notes), } ] } ])
     # update usage measure
     total_word_count = message.usage.input_tokens + message.usage.output_tokens
