@@ -111,7 +111,6 @@ def handle_assistant():
             writing_style = request.form.get('writing_style', '')
             assistant = assistant(SECTIONS_FORMATTED=note_sections, WRITING_STYLE=writing_style)
     
-    print(assistant)
     message = request.form.get('transcription-output') 
     if not message:
         return jsonify({"error": "No transcription found"}), 400
