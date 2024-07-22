@@ -6,8 +6,8 @@ CREATE TABLE user (
   password TEXT NOT NULL,
   stripe_customer_id TEXT,
   subscription_status TEXT DEFAULT 'inactive',
-  subscription_plan TEXT,
+  subscription_price_id TEXT,
   subscription_end_date DATETIME,
-  audio_length REAL DEFAULT 0,
-  word_count INTEGER DEFAULT 0
+  word_count INTEGER DEFAULT 0,
+  subscription_id TEXT
 );

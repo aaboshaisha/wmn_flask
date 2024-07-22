@@ -38,9 +38,9 @@ def register():
 
         if error is None:
             db.execute('INSERT INTO user (email, password, subscription_status) VALUES (?, ?, ?)',
-                       (email, generate_password_hash(password), 'inactive'))
+                       (email, generate_password_hash(password), 'trial'))
             db.commit()
-            return redirect(url_for('payment.checkout', email=email))
+            return redirect(url_for('auth.login', email=email))
         
         flash(error)
     return render_template('auth/register.html')  # handle GET
@@ -57,7 +57,7 @@ def login():
             error = 'Incorrect Email'
         elif not check_password_hash(user['password'], password):
             error = 'Incorrect Password'
-        elif user['subscription_status'] != 'active':
+        elif user['subscription_status'] not in ['active', 'trial']:
             error = 'Subscription required. Please subscribe first.'
             return redirect(url_for('payment.checkout', email=email))
         else:
@@ -66,7 +66,7 @@ def login():
             if user['subscription_status'] == 'exceeded':
                 error = 'You have exceeded your usage limit. Please update your subscription to continue.'
                 return redirect(url_for('payment.customer_portal'))
-            elif user['subscription_status'] not in ['active', 'canceled']:
+            elif user['subscription_status'] not in ['active', 'canceled', 'trial']:
                 return redirect(url_for('payment.checkout', email=email))
             else:
                 return redirect(url_for('notes.main'))
@@ -90,11 +90,9 @@ def load_logged_in_user():
 
 
 from myapp.usage import has_user_exceeded_usage_limits
-import time
 
 def is_subscription_active(user):
-    current_time = int(time.time())
-    return (user['subscription_status'] == 'active' and user['subscription_end_date'] > current_time)
+    return user['subscription_status'] in ['active', 'trial']
 
 # Use this decorator instead of the original login_required
 def login_required(view):

@@ -2,7 +2,7 @@ from flask import (Blueprint, render_template, request, current_app, jsonify, se
 from .assistants import *
 import anthropic
 from myapp.auth import login_required
-from myapp.usage import calculate_and_update_audio_length, calculate_and_update_word_count
+from myapp.usage import calculate_and_update_word_count
 
 
 assistants = {
