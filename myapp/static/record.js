@@ -1,102 +1,100 @@
-let recorder;
+let recognition;
 let isRecording = false;
-let recordingStartTime;
-let recordingTimer;
 const recordButton = document.getElementById('record-button');
 const status = document.getElementById('status');
 const result = document.getElementById('transcription-output');
 
-// Functions to show hints to user when recording for too long
-const warningElement = document.getElementById('warning'); // Add this element to your HTML
-let warningTimeout;
-
-function startRecordingTimer() {
-    recordingTimer = setInterval(() => {
-        const duration = (Date.now() - recordingStartTime) / 1000;
-        if (duration > 10) { showWarning(); } }, 1000);
-}
-
-function showWarning() {
-    warningElement.textContent = 'Hint: Record in small chunks to get faster and better responses.';
-    warningElement.classList.add('active');
-    
-    if (warningTimeout) { clearTimeout(warningTimeout); } // Clear any existing timeout
-    
-    // Set a new timeout to hide the warning after 5 seconds
-    warningTimeout = setTimeout(() => { hideWarning(); }, 5000); 
-}
-
-function hideWarning() {
-    warningElement.textContent = '';
-    warningElement.classList.remove('active');
-}
-
-// end of warning functions
-
 recordButton.addEventListener('click', toggleRecording);
+result.addEventListener('input', updateTranscription);
+
+let finalTranscript = '';
+let interimTranscript = '';
 
 function toggleRecording() {
-    if (isRecording) { stopRecording(); } 
-    else { startRecording(); }
+    if (isRecording) {
+        stopRecording();
+    } else {
+        startRecording();
+    }
 }
 
 function startRecording() {
-    navigator.mediaDevices.getUserMedia({ audio: true })
-        .then(function (stream) {
-            recorder = RecordRTC(stream, {
-                type: 'audio',
-                mimeType: 'audio/webm',
-                sampleRate: 44100,
-                desiredSampRate: 16000,
-                recorderType: RecordRTC.StereoAudioRecorder,
-                numberOfAudioChannels: 1
-            });
-            recorder.startRecording();
-            isRecording = true;
-            recordButton.textContent = 'Stop Recording';
-            status.textContent = 'Recording...';
-            recordingStartTime = Date.now();
-            startRecordingTimer();
-        });
-}
+    recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'en-US';
+    recognition.interimResults = true;
+    recognition.continuous = true;
+    recognition.maxAlternatives = 1;
 
+    recognition.onresult = function(event) {
+        interimTranscript = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+            if (event.results[i].isFinal) {
+                finalTranscript += event.results[i][0].transcript + ' ';
+            } else {
+                interimTranscript += event.results[i][0].transcript;
+            }
+        }
+        
+        updateDisplay();
+    };
+
+    recognition.onerror = function(event) {
+        console.error('Speech recognition error:', event.error);
+        status.textContent = 'Error: ' + event.error;
+    };
+
+    recognition.onend = function() {
+        if (isRecording) {
+            recognition.start();
+        } else {
+            recordButton.textContent = 'Start Recording';
+            status.textContent = '';
+        }
+    };
+
+    recognition.start();
+    isRecording = true;
+    recordButton.textContent = 'Stop Recording';
+    status.textContent = 'Recording...';
+}
 
 function stopRecording() {
-    clearInterval(recordingTimer);
-    hideWarning();
-    if (warningTimeout) { clearTimeout(warningTimeout); }
-    
-    recorder.stopRecording(function () {
-        let blob = recorder.getBlob();
-        uploadAudio(blob);
+    if (recognition) {
         isRecording = false;
-        recordButton.textContent = 'Start Recording';
-        status.textContent = 'Processing...';
-    });
+        recognition.stop();
+    }
+}
+
+function updateTranscription() {
+    const currentText = result.value;
+    const lastSpaceIndex = currentText.lastIndexOf(' ');
+    
+    if (lastSpaceIndex !== -1) {
+        finalTranscript = currentText.substring(0, lastSpaceIndex + 1);
+        interimTranscript = currentText.substring(lastSpaceIndex + 1);
+    } else {
+        finalTranscript = '';
+        interimTranscript = currentText;
+    }
+}
+
+function updateDisplay() {
+    result.value = finalTranscript + interimTranscript;
+    result.scrollTop = result.scrollHeight;
 }
 
 
-function uploadAudio(blob) {
-    let formData = new FormData();
-    formData.append('audio', blob, 'recording.wav');
-
-    fetch('/notes/transcribe', {
-        method: 'POST',
-        body: formData
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.output) {
-                result.value += data.output + "\n";
-            } else if (data.error) {
-                result.textContent = 'Error: ' + data.error;
-            }
-
-            status.textContent = '';
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            result.textContent = 'An error occurred during transcription.';
-            status.textContent = '';
-        });
+function clearTranscription() {
+    finalTranscript = '';
+    interimTranscript = '';
+    result.value = '';
+    if (recognition) {
+        recognition.abort();
+    }
+    isRecording = false;
+    recordButton.textContent = 'Start Recording';
+    status.textContent = '';
 }
+
+const clearButton = document.getElementById('clear-button');
+clearButton.addEventListener('click', clearTranscription);

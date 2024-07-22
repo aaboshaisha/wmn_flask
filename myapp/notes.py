@@ -1,12 +1,9 @@
-from flask import (Blueprint, render_template, request, current_app, g, flash, redirect, url_for,
-                   jsonify, session, render_template_string)
+from flask import (Blueprint, render_template, request, current_app, jsonify, session)
 from .assistants import *
 import anthropic
 from myapp.auth import login_required
 from myapp.usage import calculate_and_update_audio_length, calculate_and_update_word_count
-import speech_recognition as sr
-import tempfile
-import os
+
 
 assistants = {
     "patient_assistant": patient_assistant,
@@ -24,33 +21,6 @@ bp = Blueprint('notes', __name__, url_prefix='/notes')
 @login_required
 def main():
     return render_template('notes/main.html')
-
-
-@bp.route('/transcribe', methods=['POST'])
-@login_required
-def transcribe():
-    r = sr.Recognizer()
-    if 'audio' not in request.files: return jsonify({'error': 'No audio file provided'}), 400
-    audio_file = request.files['audio']
-    
-    with tempfile.NamedTemporaryFile(delete=False, suffix='.wav') as temp_audio:
-        audio_file.save(temp_audio.name)
-        temp_audio_path = temp_audio.name
-    
-    try:
-        calculate_and_update_audio_length(temp_audio_path)
-        with sr.AudioFile(temp_audio_path) as source:
-            audio_data = r.record(source)
-        
-            # Use Whisper API for transcription
-            openai_api_key = current_app.config.get('OPENAI_API_KEY')
-            if not openai_api_key: return jsonify({"error": "OpenAI API key not found in app configuration"}), 500
-        text = r.recognize_whisper_api(audio_data, api_key=openai_api_key)
-        return jsonify({'output': text})
-    except sr.RequestError as e:
-        return jsonify({'error': f'Could not request results from Whisper API; {str(e)}'}), 500
-    finally:
-        os.unlink(temp_audio_path)
 
 
 @bp.route("/select_assistant", methods=['POST'])
