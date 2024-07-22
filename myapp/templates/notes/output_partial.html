@@ -2,9 +2,7 @@
     <textarea id="output" name="output" class="output-textarea">{{ output }}</textarea>
     <div class="button-group">
         <button class="action-button secondary" onclick="document.getElementById('output').value=''">Clear</button>
-        <button class="action-button secondary" 
-        onclick="navigator.clipboard.writeText(document.getElementById('output').value)
-        .then(() => alert('Copied to clipboard'))">Copy</button>
+        <button class="action-button secondary" id="copyButton">Copy</button>
         <button 
             class="action-button"
             hx-post="/send"
@@ -14,3 +12,47 @@
     </div>
     <div id="email-confirmation-msg" class="confirmation-message"></div>
 </div>
+
+
+
+<script>
+document.getElementById('copyButton').addEventListener('click', function() {
+    var textArea = document.getElementById('output');
+    var text = textArea.value;
+
+    if (navigator.clipboard && window.isSecureContext) {
+        // Use Clipboard API if available
+        navigator.clipboard.writeText(text).then(function() {
+            showFeedback('Copied to clipboard');
+        }, function(err) {
+            showFeedback('Failed to copy');
+        });
+    } else {
+        // Fallback for older browsers
+        textArea.select();
+        try {
+            var successful = document.execCommand('copy');
+            showFeedback(successful ? 'Copied to clipboard' : 'Failed to copy');
+        } catch (err) {
+            showFeedback('Failed to copy');
+        }
+    }
+});
+
+function showFeedback(message) {
+    var feedback = document.createElement('div');
+    feedback.textContent = message;
+    feedback.style.position = 'fixed';
+    feedback.style.bottom = '20px';
+    feedback.style.left = '50%';
+    feedback.style.transform = 'translateX(-50%)';
+    feedback.style.backgroundColor = 'rgba(0,0,0,0.7)';
+    feedback.style.color = 'white';
+    feedback.style.padding = '10px';
+    feedback.style.borderRadius = '5px';
+    document.body.appendChild(feedback);
+    setTimeout(function() {
+        document.body.removeChild(feedback);
+    }, 2000);
+}
+</script>
