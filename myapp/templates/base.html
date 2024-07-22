@@ -11,7 +11,7 @@
 
 <body>
     <header class="main-header">
-        <h1>Write My Notes</h1>
+        <h1 hx-get="{{ url_for('index.index') }}" hx-trigger="click" hx-target="body">Write My Notes</h1>
         <button class="menu-toggle" aria-label="Toggle menu">☰</button>
     </header>
 
@@ -25,6 +25,7 @@
                 {% else %}
                 <li><a href="{{ url_for('auth.register') }}">Register</a></li>
                 <li><a href="{{ url_for('auth.login') }}">Log In</a></li>
+                <li><a href="{{ url_for('index.pricing') }}">Pricing</a></li>
                 {% endif %}
             </ul>
         </nav>

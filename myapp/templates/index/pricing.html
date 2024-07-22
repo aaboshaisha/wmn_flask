@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Pricing - {% endblock %}
+
+{% block header %}
+    <h2>Choose from one of 3 plans that suits your needs!</h2>
+{% endblock %}
+
+{% block content %}
+<section id="pricing">
+    <div class="card-grid">
+        <div class="card">
+            <p><strong>Basic Plan:</strong> £5/month - 120 minutes of audio, 20,000 words</p>
+        </div>
+        <div class="card">
+            <p><strong>Standard Plan:</strong> £10/month - 300 minutes of audio, 50,000 words</p>
+        </div>
+        <div class="card">
+            <p><strong>Premium Plan:</strong> £20/month - 600 minutes of audio, 100,000 words</p>
+        </div>
+    </div>
+    <div><a href="{{ url_for('payment.checkout') }}" class="nhs-button">Subscribe</a></div>
+</section>
+{% endblock %}

@@ -7,6 +7,10 @@ bp = Blueprint('index', __name__)
 def index():
     return render_template('index/index.html')
 
+@bp.route('/pricing')
+def pricing():
+    return render_template('index/pricing.html')
+
 @bp.route('/feedback')
 @login_required
 def feedback():
