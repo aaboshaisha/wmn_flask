@@ -49,7 +49,7 @@ def get_usage_limits(user):
         for plan_details in SUBSCRIPTION_PLANS.values():
             if plan_details['stripe_price_id'] == user['subscription_price_id']:
                 return int(plan_details['word_limit'])
-        raise ValueError(f'No plan found for price id: {user['subscription_price_id']}')
+        raise ValueError(f"No plan found for price id: {user['subscription_price_id']}")
 
 
 def has_user_exceeded_usage_limits(user):
